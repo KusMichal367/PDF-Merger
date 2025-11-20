@@ -20,6 +20,11 @@
     --input-border: 1px solid rgba(255, 255, 255, 0.2);
     --input-hover: rgba(255, 255, 255, 0.15);
     
+    /* Checkbox Colors */
+    --checkbox-bg: rgba(255, 255, 255, 0.1);
+    --checkbox-border: rgba(255, 255, 255, 0.3);
+    --checkbox-active: #ffffff;
+    
     --btn-primary-bg: #ffffff;
     --btn-primary-text: #000000;
     
@@ -48,6 +53,11 @@ body.light-mode {
     --input-bg: rgba(255, 255, 255, 0.8);
     --input-border: 1px solid rgba(0,0,0,0.1);
     --input-hover: #ffffff;
+    
+    /* Checkbox Colors */
+    --checkbox-bg: rgba(255, 255, 255, 0.6);
+    --checkbox-border: rgba(0, 0, 0, 0.2);
+    --checkbox-active: #000000;
 
     --btn-primary-bg: #000000;
     --btn-primary-text: #ffffff;
@@ -139,20 +149,18 @@ body {
     position: relative; 
 }
 
-/* TYPOGRAFIA NAGŁÓWKA */
 h1 {
     text-align: center;
     font-family: 'Cormorant Garamond', serif;
     font-weight: 300;
     font-size: 3.5rem;
     font-style: italic;
-    margin-bottom: 0.2rem; /* Zmniejszony margines, żeby podpis był blisko */
+    margin-bottom: 0.2rem;
     letter-spacing: 0px;
     text-shadow: 0 2px 20px rgba(0,0,0,0.5);
     line-height: 1;
 }
 
-/* NOWY STYL PODPISU */
 .subtitle {
     text-align: center;
     font-family: 'Cormorant Garamond', serif;
@@ -200,7 +208,79 @@ input[type="file"] { display: none; }
 /* --- CONTROLS --- */
 .controls { display: flex; justify-content: center; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
-/* --- ACTION BUTTONS AREA --- */
+/* --- CUSTOM CHECKBOX --- */
+.options-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.checkbox-container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    user-select: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Kółko (checkmark) */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 22px;
+    width: 22px;
+    background-color: var(--checkbox-bg);
+    border: 1px solid var(--checkbox-border);
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: var(--input-hover);
+}
+
+/* Kiedy zaznaczony */
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--checkbox-active);
+    border-color: var(--checkbox-active);
+}
+
+/* Ptaszek w środku */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid var(--bg-app); /* Kolor ptaszka to kolor tła */
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* --- ACTION BUTTONS --- */
 .action-buttons {
     display: flex;
     justify-content: center;
@@ -239,7 +319,6 @@ input[type="file"] { display: none; }
 }
 .btn-secondary:hover { background: var(--input-hover); border-color: var(--text-main); }
 
-/* --- RESET BUTTON --- */
 .btn-reset {
     background: transparent;
     color: var(--text-muted);
@@ -255,7 +334,6 @@ input[type="file"] { display: none; }
 
 /* --- FILE LIST --- */
 #file-list { list-style: none; padding: 0; margin-bottom: 1rem; max-height: 300px; overflow-y: auto; }
-
 #file-list::-webkit-scrollbar { width: 6px; }
 #file-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
 #file-list::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 10px; }
@@ -287,11 +365,7 @@ input[type="file"] { display: none; }
     transition: 0.2s;
     opacity: 0.7;
 }
-
-.item-controls button:hover:not(:disabled) { 
-    opacity: 1; background: var(--text-main); color: var(--bg-app); border-color: var(--text-main); 
-}
-
+.item-controls button:hover:not(:disabled) { opacity: 1; background: var(--text-main); color: var(--bg-app); border-color: var(--text-main); }
 .remove-btn:hover { background: var(--danger) !important; border-color: var(--danger) !important; color: white !important; }
 
 /* --- THEME TOGGLE --- */

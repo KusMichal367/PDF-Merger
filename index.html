@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Merger (Elegant)</title>
+    <title>PDF Merger (Chapters)</title>
     
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
@@ -57,6 +57,14 @@
             </div>
 
             <ul id="file-list"></ul>
+
+            <div class="options-wrapper" id="optionsWrapper" style="display: none;">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="chaptersOpt">
+                    <span class="checkmark"></span>
+                    <span class="label-text">Dodaj rozdziały z nazw plików</span>
+                </label>
+            </div>
 
             <div class="action-buttons">
                 <button id="resetBtn" class="btn btn-reset" onclick="resetApp()" style="display: none;">Resetuj</button>
