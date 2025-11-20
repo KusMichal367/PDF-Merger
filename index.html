@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Merger (Chapters)</title>
+    <title>PDF Merger (Final)</title>
     
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
@@ -59,6 +59,12 @@
             <ul id="file-list"></ul>
 
             <div class="options-wrapper" id="optionsWrapper" style="display: none;">
+                
+                <div class="filename-container">
+                    <input type="text" id="fileNameInput" placeholder="Nazwa pliku (opcjonalnie)">
+                    <span class="extension-hint">.pdf</span>
+                </div>
+
                 <label class="checkbox-container">
                     <input type="checkbox" id="chaptersOpt">
                     <span class="checkmark"></span>

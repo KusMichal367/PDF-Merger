@@ -4,8 +4,9 @@ const fileListEl = document.getElementById('file-list');
 const mergeBtn = document.getElementById('mergeBtn');
 const resetBtn = document.getElementById('resetBtn'); 
 const sortControls = document.getElementById('sortControls');
-const optionsWrapper = document.getElementById('optionsWrapper'); // Kontener checkboxa
-const chaptersOpt = document.getElementById('chaptersOpt'); // Sam checkbox
+const optionsWrapper = document.getElementById('optionsWrapper');
+const chaptersOpt = document.getElementById('chaptersOpt');
+const fileNameInput = document.getElementById('fileNameInput'); // Nowy input
 const statusEl = document.getElementById('status');
 const fileInput = document.getElementById('fileInput');
 
@@ -33,12 +34,12 @@ function renderList() {
     
     if (pdfFiles.length > 0) {
         sortControls.style.display = 'flex';
-        optionsWrapper.style.display = 'flex'; // Pokaż opcje
+        optionsWrapper.style.display = 'flex'; 
         mergeBtn.disabled = false;
         resetBtn.style.display = 'block'; 
     } else {
         sortControls.style.display = 'none';
-        optionsWrapper.style.display = 'none'; // Ukryj opcje
+        optionsWrapper.style.display = 'none'; 
         mergeBtn.disabled = true;
         resetBtn.style.display = 'none'; 
     }
@@ -68,7 +69,8 @@ window.resetApp = function() {
     renderList();
     statusEl.innerText = '';
     fileInput.value = null;
-    chaptersOpt.checked = false; // Reset checkboxa
+    chaptersOpt.checked = false;
+    fileNameInput.value = ''; // Reset nazwy
 };
 
 window.moveItem = function(index, direction) {
@@ -101,9 +103,6 @@ window.mergePDFs = async function() {
 
         const { PDFDocument } = PDFLib;
         const mergedPdf = await PDFDocument.create();
-        
-        // Tablica do przechowywania informacji o rozdziałach
-        // { title: "nazwa pliku", pageRef: PDFRef }
         const chapters = []; 
 
         for (const item of pdfFiles) {
@@ -111,32 +110,39 @@ window.mergePDFs = async function() {
             const pdf = await PDFDocument.load(arrayBuffer);
             const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
             
-            // Czy dodajemy ten plik jako rozdział?
             if (chaptersOpt.checked && copiedPages.length > 0) {
-                // Dodajemy stronę do dokumentu i zapisujemy REFERENCJĘ do pierwszej strony tego pliku
                 const firstPage = mergedPdf.addPage(copiedPages[0]);
                 chapters.push({
-                    title: item.file.name.replace('.pdf', ''), // Usuwamy rozszerzenie dla ładniejszego wyglądu
+                    title: item.file.name.replace('.pdf', ''),
                     pageRef: firstPage.ref
                 });
 
-                // Dodajemy resztę stron
                 for (let i = 1; i < copiedPages.length; i++) {
                     mergedPdf.addPage(copiedPages[i]);
                 }
             } else {
-                // Standardowe dodawanie bez rozdziałów
                 copiedPages.forEach((page) => mergedPdf.addPage(page));
             }
         }
 
-        // Jeśli opcja zaznaczona i mamy rozdziały, generujemy strukturę Outline
         if (chaptersOpt.checked && chapters.length > 0) {
             await createOutlines(mergedPdf, chapters);
         }
 
         const pdfBytes = await mergedPdf.save();
-        download(pdfBytes, "polaczony_dokument.pdf", "application/pdf");
+
+        // LOGIKA NAZWY PLIKU
+        let finalName = fileNameInput.value.trim();
+        if (!finalName) {
+            finalName = "polaczony_dokument.pdf";
+        } else {
+            // Dodaj .pdf jeśli brakuje
+            if (!finalName.toLowerCase().endsWith('.pdf')) {
+                finalName += ".pdf";
+            }
+        }
+
+        download(pdfBytes, finalName, "application/pdf");
         
         statusEl.innerText = 'Sukces! Plik pobrany.';
         statusEl.style.color = 'var(--text-main)';
@@ -151,23 +157,21 @@ window.mergePDFs = async function() {
     }
 };
 
-// --- POMOCNIK: TWORZENIE ZAKŁADEK (OUTLINES) W PDF-LIB ---
+// --- POMOCNIK: TWORZENIE ZAKŁADEK ---
 async function createOutlines(pdfDoc, chapters) {
-    const { PDFName, PDFDict, PDFArray, PDFString } = PDFLib;
+    const { PDFName, PDFString } = PDFLib;
 
-    // 1. Tworzymy obiekty Outline Item dla każdego rozdziału
     const outlineRefs = [];
     for (let i = 0; i < chapters.length; i++) {
         outlineRefs.push(pdfDoc.context.register(pdfDoc.context.obj({
             Title: PDFString.of(chapters[i].title),
-            Parent: null, // Uzupełnimy później (Root)
-            Prev: null,   // Uzupełnimy w pętli
-            Next: null,   // Uzupełnimy w pętli
-            Dest: [chapters[i].pageRef, PDFName.of('Fit')] // Link do strony
+            Parent: null, 
+            Prev: null,   
+            Next: null,   
+            Dest: [chapters[i].pageRef, PDFName.of('Fit')] 
         })));
     }
 
-    // 2. Tworzymy Root Outline (Katalog główny zakładek)
     const outlineRootRef = pdfDoc.context.register(pdfDoc.context.obj({
         Type: PDFName.of('Outlines'),
         First: outlineRefs[0],
@@ -175,26 +179,20 @@ async function createOutlines(pdfDoc, chapters) {
         Count: chapters.length
     }));
 
-    // 3. Linkujemy elementy ze sobą i z Rootem
     for (let i = 0; i < outlineRefs.length; i++) {
         const current = outlineRefs[i];
         const prev = i > 0 ? outlineRefs[i - 1] : null;
         const next = i < outlineRefs.length - 1 ? outlineRefs[i + 1] : null;
 
-        // Ustawiamy Parent na Root
         pdfDoc.context.lookup(current).set(PDFName.of('Parent'), outlineRootRef);
-
-        // Linkujemy Prev/Next
         if (prev) pdfDoc.context.lookup(current).set(PDFName.of('Prev'), prev);
         if (next) pdfDoc.context.lookup(current).set(PDFName.of('Next'), next);
     }
 
-    // 4. Podpinamy Root Outline do Katalogu PDF
     pdfDoc.catalog.set(PDFName.of('Outlines'), outlineRootRef);
 }
 
 // --- OBSŁUGA DARK MODE / LIGHT MODE ---
-
 const toggleBtn = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const body = document.body;
@@ -209,5 +207,4 @@ toggleBtn.addEventListener('click', () => {
     updateIcon();
 });
 
-// Start
 updateIcon();

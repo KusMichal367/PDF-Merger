@@ -20,7 +20,7 @@
     --input-border: 1px solid rgba(255, 255, 255, 0.2);
     --input-hover: rgba(255, 255, 255, 0.15);
     
-    /* Checkbox Colors */
+    /* Checkbox & Forms */
     --checkbox-bg: rgba(255, 255, 255, 0.1);
     --checkbox-border: rgba(255, 255, 255, 0.3);
     --checkbox-active: #ffffff;
@@ -54,7 +54,7 @@ body.light-mode {
     --input-border: 1px solid rgba(0,0,0,0.1);
     --input-hover: #ffffff;
     
-    /* Checkbox Colors */
+    /* Checkbox */
     --checkbox-bg: rgba(255, 255, 255, 0.6);
     --checkbox-border: rgba(0, 0, 0, 0.2);
     --checkbox-active: #000000;
@@ -208,19 +208,61 @@ input[type="file"] { display: none; }
 /* --- CONTROLS --- */
 .controls { display: flex; justify-content: center; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
-/* --- CUSTOM CHECKBOX --- */
+/* --- OPTIONS WRAPPER --- */
 .options-wrapper {
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Układ pionowy: input nazwy nad checkboxem */
+    align-items: center;
     margin-top: 1rem;
     margin-bottom: 1rem;
+    gap: 1rem;
 }
 
+/* FILENAME INPUT */
+.filename-container {
+    display: flex;
+    align-items: center;
+    background: var(--input-bg);
+    border: var(--input-border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    width: 100%;
+    max-width: 300px;
+    transition: 0.2s;
+}
+
+.filename-container:hover, .filename-container:focus-within {
+    border-color: var(--text-main);
+    background: var(--input-hover);
+}
+
+.filename-container input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    width: 100%;
+}
+
+.filename-container input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+.extension-hint {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-left: 5px;
+    opacity: 0.7;
+}
+
+/* CUSTOM CHECKBOX */
 .checkbox-container {
     display: block;
     position: relative;
     padding-left: 35px;
-    margin-bottom: 12px;
     cursor: pointer;
     font-size: 0.95rem;
     color: var(--text-main);
@@ -236,7 +278,6 @@ input[type="file"] { display: none; }
     width: 0;
 }
 
-/* Kółko (checkmark) */
 .checkmark {
     position: absolute;
     top: 0;
@@ -253,13 +294,11 @@ input[type="file"] { display: none; }
     background-color: var(--input-hover);
 }
 
-/* Kiedy zaznaczony */
 .checkbox-container input:checked ~ .checkmark {
     background-color: var(--checkbox-active);
     border-color: var(--checkbox-active);
 }
 
-/* Ptaszek w środku */
 .checkmark:after {
     content: "";
     position: absolute;
@@ -275,7 +314,7 @@ input[type="file"] { display: none; }
     top: 3px;
     width: 5px;
     height: 10px;
-    border: solid var(--bg-app); /* Kolor ptaszka to kolor tła */
+    border: solid var(--bg-app);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
@@ -334,6 +373,7 @@ input[type="file"] { display: none; }
 
 /* --- FILE LIST --- */
 #file-list { list-style: none; padding: 0; margin-bottom: 1rem; max-height: 300px; overflow-y: auto; }
+
 #file-list::-webkit-scrollbar { width: 6px; }
 #file-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
 #file-list::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 10px; }
@@ -365,7 +405,11 @@ input[type="file"] { display: none; }
     transition: 0.2s;
     opacity: 0.7;
 }
-.item-controls button:hover:not(:disabled) { opacity: 1; background: var(--text-main); color: var(--bg-app); border-color: var(--text-main); }
+
+.item-controls button:hover:not(:disabled) { 
+    opacity: 1; background: var(--text-main); color: var(--bg-app); border-color: var(--text-main); 
+}
+
 .remove-btn:hover { background: var(--danger) !important; border-color: var(--danger) !important; color: white !important; }
 
 /* --- THEME TOGGLE --- */
