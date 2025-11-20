@@ -72,7 +72,6 @@ window.resetApp = function() {
     renderList();
     statusEl.innerText = '';
     fileInput.value = null;
-    // ZMIANA: Resetujemy do TRUE, bo to nowa wartość domyślna
     chaptersOpt.checked = true;
     fileNameInput.value = '';
 };
@@ -115,12 +114,15 @@ window.mergePDFs = async function() {
             const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
             
             if (chaptersOpt.checked && copiedPages.length > 0) {
+                // Dodajemy pierwszą stronę i zapisujemy jej referencję do spisu treści
                 const firstPage = mergedPdf.addPage(copiedPages[0]);
                 chapters.push({
-                    title: item.file.name.replace('.pdf', ''),
+                    // Usuwamy rozszerzenie .pdf z nazwy rozdziału
+                    title: item.file.name.replace(/\.pdf$/i, ''), 
                     pageRef: firstPage.ref
                 });
 
+                // Dodajemy pozostałe strony
                 for (let i = 1; i < copiedPages.length; i++) {
                     mergedPdf.addPage(copiedPages[i]);
                 }
@@ -129,12 +131,14 @@ window.mergePDFs = async function() {
             }
         }
 
+        // Generowanie spisu treści (jeśli są rozdziały)
         if (chaptersOpt.checked && chapters.length > 0) {
             await createOutlines(mergedPdf, chapters);
         }
 
         const pdfBytes = await mergedPdf.save();
 
+        // Logika nazwy pliku
         let finalName = fileNameInput.value.trim();
         if (!finalName) {
             finalName = "polaczony_dokument.pdf";
@@ -159,20 +163,32 @@ window.mergePDFs = async function() {
     }
 };
 
+/**
+ * Funkcja tworząca drzewo zakładek (Outlines).
+ * Używamy PDFHexString, aby obsłużyć polskie znaki i symbole specjalne bez błędów.
+ */
 async function createOutlines(pdfDoc, chapters) {
-    const { PDFName, PDFString } = PDFLib;
+    const { PDFName, PDFHexString } = PDFLib;
 
+    // 1. Rejestrujemy obiekty dla każdego rozdziału
     const outlineRefs = [];
     for (let i = 0; i < chapters.length; i++) {
-        outlineRefs.push(pdfDoc.context.register(pdfDoc.context.obj({
-            Title: PDFString.of(chapters[i].title),
-            Parent: null, 
-            Prev: null,   
-            Next: null,   
-            Dest: [chapters[i].pageRef, PDFName.of('Fit')] 
-        })));
+        // Używamy PDFHexString.fromText, co zapewnia kodowanie UTF-16BE.
+        // Dzięki temu "Zażółć gęślą jaźń (v2)" nie zepsuje struktury pliku.
+        const titleHex = PDFHexString.fromText(chapters[i].title);
+
+        const outlineItem = pdfDoc.context.obj({
+            Title: titleHex,
+            Parent: null, // Uzupełnimy za chwilę
+            Prev: null,   // Uzupełnimy za chwilę
+            Next: null,   // Uzupełnimy za chwilę
+            Dest: [chapters[i].pageRef, PDFName.of('Fit')] // Link do strony
+        });
+        
+        outlineRefs.push(pdfDoc.context.register(outlineItem));
     }
 
+    // 2. Tworzymy główny korzeń (Root) spisu treści
     const outlineRootRef = pdfDoc.context.register(pdfDoc.context.obj({
         Type: PDFName.of('Outlines'),
         First: outlineRefs[0],
@@ -180,19 +196,29 @@ async function createOutlines(pdfDoc, chapters) {
         Count: chapters.length
     }));
 
+    // 3. Linkujemy wszystko ze sobą (LinkedList)
     for (let i = 0; i < outlineRefs.length; i++) {
         const current = outlineRefs[i];
         const prev = i > 0 ? outlineRefs[i - 1] : null;
         const next = i < outlineRefs.length - 1 ? outlineRefs[i + 1] : null;
 
+        // Każdy element musi wskazywać na Rodzica (Root)
         pdfDoc.context.lookup(current).set(PDFName.of('Parent'), outlineRootRef);
-        if (prev) pdfDoc.context.lookup(current).set(PDFName.of('Prev'), prev);
-        if (next) pdfDoc.context.lookup(current).set(PDFName.of('Next'), next);
+
+        // Ustawiamy powiązania Poprzedni / Następny
+        if (prev) {
+            pdfDoc.context.lookup(current).set(PDFName.of('Prev'), prev);
+        }
+        if (next) {
+            pdfDoc.context.lookup(current).set(PDFName.of('Next'), next);
+        }
     }
 
+    // 4. Podpinamy spis treści do katalogu głównego PDF
     pdfDoc.catalog.set(PDFName.of('Outlines'), outlineRootRef);
 }
 
+// --- OBSŁUGA DARK MODE / LIGHT MODE ---
 const toggleBtn = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const body = document.body;
