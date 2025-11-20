@@ -2,7 +2,7 @@
 let pdfFiles = []; 
 const fileListEl = document.getElementById('file-list');
 const mergeBtn = document.getElementById('mergeBtn');
-const resetBtn = document.getElementById('resetBtn'); // Nowy przycisk
+const resetBtn = document.getElementById('resetBtn'); 
 const sortControls = document.getElementById('sortControls');
 const statusEl = document.getElementById('status');
 const fileInput = document.getElementById('fileInput');
@@ -32,11 +32,11 @@ function renderList() {
     if (pdfFiles.length > 0) {
         sortControls.style.display = 'flex';
         mergeBtn.disabled = false;
-        resetBtn.style.display = 'block'; // Pokaż reset
+        resetBtn.style.display = 'block'; 
     } else {
         sortControls.style.display = 'none';
         mergeBtn.disabled = true;
-        resetBtn.style.display = 'none'; // Ukryj reset
+        resetBtn.style.display = 'none'; 
     }
 
     pdfFiles.forEach((item, index) => {
@@ -59,12 +59,11 @@ function renderList() {
     });
 }
 
-// NOWA FUNKCJA: RESET APLIKACJI
+// RESET APLIKACJI
 window.resetApp = function() {
     pdfFiles = [];
     renderList();
     statusEl.innerText = '';
-    // fileInput.value jest już null po zmianie, ale dla pewności
     fileInput.value = null;
 };
 
