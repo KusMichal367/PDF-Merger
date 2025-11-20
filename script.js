@@ -49,7 +49,6 @@ function renderList() {
         li.className = 'file-item';
         const fileSize = (item.file.size / 1024 / 1024).toFixed(2) + ' MB';
 
-        // Zmieniona struktura HTML: Numer w kółku + Detale obok
         li.innerHTML = `
             <div class="file-left">
                 <span class="file-index">${index + 1}</span>
@@ -73,7 +72,8 @@ window.resetApp = function() {
     renderList();
     statusEl.innerText = '';
     fileInput.value = null;
-    chaptersOpt.checked = false;
+    // ZMIANA: Resetujemy do TRUE, bo to nowa wartość domyślna
+    chaptersOpt.checked = true;
     fileNameInput.value = '';
 };
 

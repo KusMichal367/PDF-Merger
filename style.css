@@ -235,7 +235,7 @@ input[type="file"] { display: none; }
     border: solid var(--bg-app); border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
 
-/* --- LISTA PLIKÓW (Poprawiona) --- */
+/* --- LISTA PLIKÓW --- */
 #file-list { list-style: none; padding: 0; margin-bottom: 1rem; max-height: 300px; overflow-y: auto; }
 #file-list::-webkit-scrollbar { width: 6px; }
 #file-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
@@ -254,22 +254,20 @@ input[type="file"] { display: none; }
 }
 .file-item:hover { background: var(--input-hover); }
 
-/* Kontener dla lewej strony (numer + nazwa) */
 .file-left {
     display: flex;
     align-items: center;
     flex: 1;
-    min-width: 0; /* Zapobiega wyjeżdżaniu tekstu */
+    min-width: 0;
 }
 
-/* Kółeczko z numerem */
 .file-index {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 28px;
     height: 28px;
-    min-width: 28px; /* Sztywne wymiary */
+    min-width: 28px;
     background-color: var(--index-bg);
     color: var(--index-text);
     border-radius: 50%;
@@ -279,7 +277,6 @@ input[type="file"] { display: none; }
     font-family: 'Inter', sans-serif;
 }
 
-/* Kontener tekstu */
 .file-details {
     display: flex;
     flex-direction: column;
@@ -301,7 +298,6 @@ input[type="file"] { display: none; }
     margin-top: 2px;
 }
 
-/* Kontrolki (góra/dół/usuń) */
 .item-controls {
     display: flex;
     align-items: center;
