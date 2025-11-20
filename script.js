@@ -6,7 +6,7 @@ const resetBtn = document.getElementById('resetBtn');
 const sortControls = document.getElementById('sortControls');
 const optionsWrapper = document.getElementById('optionsWrapper');
 const chaptersOpt = document.getElementById('chaptersOpt');
-const fileNameInput = document.getElementById('fileNameInput'); // Nowy input
+const fileNameInput = document.getElementById('fileNameInput');
 const statusEl = document.getElementById('status');
 const fileInput = document.getElementById('fileInput');
 
@@ -49,10 +49,14 @@ function renderList() {
         li.className = 'file-item';
         const fileSize = (item.file.size / 1024 / 1024).toFixed(2) + ' MB';
 
+        // Zmieniona struktura HTML: Numer w kółku + Detale obok
         li.innerHTML = `
-            <div>
-                <span class="file-info">${index + 1}. ${item.file.name}</span>
-                <span class="file-size">(${fileSize})</span>
+            <div class="file-left">
+                <span class="file-index">${index + 1}</span>
+                <div class="file-details">
+                    <span class="file-name" title="${item.file.name}">${item.file.name}</span>
+                    <span class="file-size">${fileSize}</span>
+                </div>
             </div>
             <div class="item-controls">
                 <button onclick="moveItem(${index}, -1)" title="W górę" ${index === 0 ? 'disabled' : ''}>▲</button>
@@ -70,7 +74,7 @@ window.resetApp = function() {
     statusEl.innerText = '';
     fileInput.value = null;
     chaptersOpt.checked = false;
-    fileNameInput.value = ''; // Reset nazwy
+    fileNameInput.value = '';
 };
 
 window.moveItem = function(index, direction) {
@@ -131,12 +135,10 @@ window.mergePDFs = async function() {
 
         const pdfBytes = await mergedPdf.save();
 
-        // LOGIKA NAZWY PLIKU
         let finalName = fileNameInput.value.trim();
         if (!finalName) {
             finalName = "polaczony_dokument.pdf";
         } else {
-            // Dodaj .pdf jeśli brakuje
             if (!finalName.toLowerCase().endsWith('.pdf')) {
                 finalName += ".pdf";
             }
@@ -157,7 +159,6 @@ window.mergePDFs = async function() {
     }
 };
 
-// --- POMOCNIK: TWORZENIE ZAKŁADEK ---
 async function createOutlines(pdfDoc, chapters) {
     const { PDFName, PDFString } = PDFLib;
 
@@ -192,7 +193,6 @@ async function createOutlines(pdfDoc, chapters) {
     pdfDoc.catalog.set(PDFName.of('Outlines'), outlineRootRef);
 }
 
-// --- OBSŁUGA DARK MODE / LIGHT MODE ---
 const toggleBtn = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const body = document.body;
