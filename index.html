@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger (Elegant)</title>
+    
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="ambient-background">
+        <div class="panel p1"></div>
+        <div class="panel p2"></div>
+        <div class="panel p3"></div>
+        <div class="panel p4"></div>
+        <div class="panel p5"></div>
+        <div class="panel p6"></div>
+        <div class="panel p7"></div>
+        <div class="panel p8"></div>
+        <div class="panel p9"></div>
+        <div class="panel p10"></div>
+        <div class="panel p11"></div>
+        <div class="panel p12"></div>
+        <div class="panel p13"></div>
+        <div class="panel p14"></div>
+        <div class="panel p15"></div>
+        <div class="panel p16"></div>
+        <div class="panel p17"></div>
+        <div class="panel p18"></div>
+        <div class="panel p19"></div>
+        <div class="panel p20"></div>
+    </div>
+
+    <button id="theme-toggle" class="theme-btn" title="Zmień motyw">
+        <span id="theme-icon">☀️</span>
+    </button>
+
+    <div class="content-wrapper">
+        <h1>Łączenie plików PDF</h1>
+
+        <div class="glass-container main-card">
+            <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+                <div class="icon-box">📄</div>
+                <p>Kliknij, aby wybrać pliki</p>
+                <input type="file" id="fileInput" accept=".pdf" multiple>
+            </div>
+
+            <div class="controls" id="sortControls" style="display: none;">
+                <button class="btn btn-secondary" onclick="sortFiles('upload')">Kolejność przesłania</button>
+                <button class="btn btn-secondary" onclick="sortFiles('alpha')">Alfabetycznie (A-Z)</button>
+            </div>
+
+            <ul id="file-list"></ul>
+
+            <div class="action-buttons">
+                <button id="resetBtn" class="btn btn-reset" onclick="resetApp()" style="display: none;">Resetuj</button>
+                <button id="mergeBtn" class="btn btn-primary" onclick="mergePDFs()" disabled>Połącz PDF i Pobierz</button>
+            </div>
+
+            <div id="status"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
