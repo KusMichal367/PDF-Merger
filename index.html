@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Merger (Auto Chapters)</title>
+    <title>PDF Merger (PDF + obrazy)</title>
     
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
@@ -41,14 +41,14 @@
     </button>
 
     <div class="content-wrapper">
-        <h1>Łączenie plików PDF</h1>
+        <h1>Łączenie PDF i obrazów</h1>
         <p class="subtitle">by Michał Kuś</p>
 
         <div class="glass-container main-card">
             <div class="upload-section" onclick="document.getElementById('fileInput').click()">
                 <div class="icon-box">📄</div>
-                <p>Kliknij, aby wybrać pliki</p>
-                <input type="file" id="fileInput" accept=".pdf" multiple>
+                <p>Kliknij, aby wybrać pliki PDF, JPG lub PNG</p>
+                <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple>
             </div>
 
             <div class="controls" id="sortControls" style="display: none;">
@@ -73,7 +73,7 @@
 
             <div class="action-buttons">
                 <button id="resetBtn" class="btn btn-reset" onclick="resetApp()" style="display: none;">Resetuj</button>
-                <button id="mergeBtn" class="btn btn-primary" onclick="mergePDFs()" disabled>Połącz PDF i Pobierz</button>
+                <button id="mergeBtn" class="btn btn-primary" onclick="mergePDFs()" disabled>Połącz i pobierz PDF</button>
             </div>
 
             <div id="status"></div>
