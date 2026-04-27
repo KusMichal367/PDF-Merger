@@ -9,11 +9,63 @@ const chaptersOpt = document.getElementById('chaptersOpt');
 const fileNameInput = document.getElementById('fileNameInput');
 const statusEl = document.getElementById('status');
 const fileInput = document.getElementById('fileInput');
+const uploadSection = document.getElementById('uploadSection');
+let dragDepth = 0;
 
 // --- OBSŁUGA PLIKÓW PDF I OBRAZÓW ---
 
 fileInput.addEventListener('change', function(e) {
-    const newFiles = Array.from(e.target.files);
+    addFiles(e.target.files);
+    this.value = null;
+});
+
+uploadSection.addEventListener('click', () => {
+    fileInput.click();
+});
+
+uploadSection.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        fileInput.click();
+    }
+});
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+    document.addEventListener(eventName, preventBrowserFileDrop);
+});
+
+uploadSection.addEventListener('dragenter', (event) => {
+    if (!isFileDrag(event)) return;
+    event.preventDefault();
+    dragDepth++;
+    uploadSection.classList.add('is-dragover');
+});
+
+uploadSection.addEventListener('dragover', (event) => {
+    if (!isFileDrag(event)) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    uploadSection.classList.add('is-dragover');
+});
+
+uploadSection.addEventListener('dragleave', (event) => {
+    if (!isFileDrag(event)) return;
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) {
+        uploadSection.classList.remove('is-dragover');
+    }
+});
+
+uploadSection.addEventListener('drop', (event) => {
+    if (!isFileDrag(event)) return;
+    event.preventDefault();
+    dragDepth = 0;
+    uploadSection.classList.remove('is-dragover');
+    addFiles(event.dataTransfer.files);
+});
+
+function addFiles(fileList) {
+    const newFiles = Array.from(fileList || []);
     if (newFiles.length === 0) return;
 
     const supportedFiles = newFiles.filter((file) => getFileKind(file) !== null);
@@ -21,7 +73,6 @@ fileInput.addEventListener('change', function(e) {
     if (supportedFiles.length === 0) {
         statusEl.innerText = 'Wybierz pliki PDF, JPG lub PNG.';
         statusEl.style.color = 'var(--danger)';
-        this.value = null;
         return;
     }
 
@@ -44,8 +95,16 @@ fileInput.addEventListener('change', function(e) {
     });
 
     renderList();
-    this.value = null;
-});
+}
+
+function preventBrowserFileDrop(event) {
+    if (!isFileDrag(event)) return;
+    event.preventDefault();
+}
+
+function isFileDrag(event) {
+    return event.dataTransfer && Array.from(event.dataTransfer.types || []).includes('Files');
+}
 
 function renderList() {
     fileListEl.innerHTML = '';

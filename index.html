@@ -45,9 +45,9 @@
         <p class="subtitle">by Michał Kuś</p>
 
         <div class="glass-container main-card">
-            <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+            <div id="uploadSection" class="upload-section" role="button" tabindex="0" aria-label="Dodaj pliki PDF, JPG lub PNG">
                 <div class="icon-box">📄</div>
-                <p>Kliknij, aby wybrać pliki PDF, JPG lub PNG</p>
+                <p>Kliknij albo przeciągnij tutaj pliki PDF, JPG lub PNG</p>
                 <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple>
             </div>
 
