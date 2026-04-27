@@ -19,10 +19,6 @@ fileInput.addEventListener('change', function(e) {
     this.value = null;
 });
 
-uploadSection.addEventListener('click', () => {
-    fileInput.click();
-});
-
 uploadSection.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
@@ -31,19 +27,17 @@ uploadSection.addEventListener('keydown', (event) => {
 });
 
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
-    document.addEventListener(eventName, preventBrowserFileDrop);
+    document.addEventListener(eventName, preventBrowserFileDrop, true);
 });
 
 uploadSection.addEventListener('dragenter', (event) => {
     if (!isFileDrag(event)) return;
-    event.preventDefault();
     dragDepth++;
     uploadSection.classList.add('is-dragover');
 });
 
 uploadSection.addEventListener('dragover', (event) => {
     if (!isFileDrag(event)) return;
-    event.preventDefault();
     event.dataTransfer.dropEffect = 'copy';
     uploadSection.classList.add('is-dragover');
 });
@@ -58,10 +52,9 @@ uploadSection.addEventListener('dragleave', (event) => {
 
 uploadSection.addEventListener('drop', (event) => {
     if (!isFileDrag(event)) return;
-    event.preventDefault();
     dragDepth = 0;
     uploadSection.classList.remove('is-dragover');
-    addFiles(event.dataTransfer.files);
+    addFiles(getDroppedFiles(event));
 });
 
 function addFiles(fileList) {
@@ -103,7 +96,22 @@ function preventBrowserFileDrop(event) {
 }
 
 function isFileDrag(event) {
-    return event.dataTransfer && Array.from(event.dataTransfer.types || []).includes('Files');
+    const types = event.dataTransfer ? Array.from(event.dataTransfer.types || []) : [];
+    return types.includes('Files') || types.includes('application/x-moz-file');
+}
+
+function getDroppedFiles(event) {
+    const items = Array.from(event.dataTransfer.items || []);
+    const filesFromItems = items
+        .filter((item) => item.kind === 'file')
+        .map((item) => item.getAsFile())
+        .filter(Boolean);
+
+    if (filesFromItems.length > 0) {
+        return filesFromItems;
+    }
+
+    return event.dataTransfer.files;
 }
 
 function renderList() {

@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -45,11 +45,11 @@
         <p class="subtitle">by Michał Kuś</p>
 
         <div class="glass-container main-card">
-            <div id="uploadSection" class="upload-section" role="button" tabindex="0" aria-label="Dodaj pliki PDF, JPG lub PNG">
+            <label id="uploadSection" class="upload-section" for="fileInput" tabindex="0" aria-label="Dodaj pliki PDF, JPG lub PNG">
                 <div class="icon-box">📄</div>
                 <p>Kliknij albo przeciągnij tutaj pliki PDF, JPG lub PNG</p>
                 <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple>
-            </div>
+            </label>
 
             <div class="controls" id="sortControls" style="display: none;">
                 <button class="btn btn-secondary" onclick="sortFiles('upload')">Kolejność przesłania</button>
@@ -80,6 +80,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="./script.js?v=2"></script>
 </body>
 </html>

@@ -178,6 +178,7 @@ h1 {
 }
 
 .upload-section {
+    display: block;
     background: var(--input-bg);
     border: var(--input-border);
     border-radius: 16px;
